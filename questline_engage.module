@@ -1,0 +1,2 @@
+<?php
+require_once DRUPAL_ROOT .'/' . drupal_get_path('module', 'questline_engage') . '/config/config.php';

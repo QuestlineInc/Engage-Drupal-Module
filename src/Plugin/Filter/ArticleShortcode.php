@@ -113,7 +113,7 @@ class ArticleShortcode extends FilterBase {
 		$embed = '';
 		
 		if ($article_id != '' && $article_type != '') {
-			$url = 'http://api-local.questline.com/v3/content/articles/' . $article_type . '/' . $article_id . '?expand=embed';
+			$url = QL_ENGAGE_API_URL . '/content/articles/' . $article_type . '/' . $article_id . '?expand=embed';
 
 			$http_client = $this->httpGet($url);
 			$response = curl_exec($http_client);
