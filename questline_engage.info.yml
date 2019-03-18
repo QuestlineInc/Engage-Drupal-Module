@@ -1,0 +1,6 @@
+name: Questline Engage
+type: module
+description: The official Drupal plugin for Questline's Engage platform.
+package: Custom
+version: 0.1.0
+core: 8.x

@@ -1,0 +1,17 @@
+questline_engage.admin_apikey:
+    path: '/admin/config/questline_engage/apikey'
+    defaults:
+        _form: '\Drupal\questline_engage\Form\ApiKeyForm'
+        _title: 'Questline Engage: API Key'
+    requirements:
+        _permission: 'access administration pages'
+    options:
+        _admin_route: TRUE
+
+system.admin_config_questline_engage:
+    path: '/admin/config/questline_engage'
+    defaults:
+        _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+        _title: 'Questline Engage'
+    requirements:
+        _permission: 'access administration pages'
