@@ -78,7 +78,7 @@ class ArticleShortcode extends FilterBase {
 		
 		$css = '<style type="text/css">';
 		
-		// Check to hide display title. If the display_title param was given
+		// Check to hide article title. If the display_title param was given
 		// in the shortcode, use it; otherwise, use the filter setting
 		if ($display_title != null) {
 			if ($display_title == 'false') {
@@ -91,7 +91,7 @@ class ArticleShortcode extends FilterBase {
 			}
 		}
 		
-		// Check to hide display published date. If the display_published_date param
+		// Check to hide article published date. If the display_published_date param
 		// was given in the shortcode, use it; otherwise, use the filter setting
 		if ($display_published_date != null) {
 			if ($display_published_date == 'false') {
