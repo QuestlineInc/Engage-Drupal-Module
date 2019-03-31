@@ -13,7 +13,7 @@ use Drupal\filter\Plugin\FilterBase;
  *    type = Drupal\filter\Plugin\FilterInterface::TYPE_MARKUP_LANGUAGE
  * )
  */
-class ArticleShortcode extends FilterBase {
+class EngageArticleShortcode extends FilterBase {
 	public function process($text, $langcode) {
 		$pattern = '/\[ql_engage_article.+?\/\]/s';
 		$count = preg_match_all($pattern, $text, $matches);
@@ -30,14 +30,16 @@ class ArticleShortcode extends FilterBase {
 				$article_type = $this->getKeyValueFromArray('type', $kvps);
 				$display_title = $this->getKeyValueFromArray('display_title', $kvps);
 				$display_published_date = $this->getKeyValueFromArray('display_published_date', $kvps);
+				$include_jquery = $this->getKeyValueFromArray('include_jquery', $kvps);
+				
+				// Check to include jquery
+				$article_embed = $this->includeJQuery($include_jquery);
 				
 				// Call out to Engage API to retrieve article
-				$article_embed = $this->getArticleEmbed($article_id, $article_type);
+				$article_embed .= $this->getArticleEmbed($article_id, $article_type);
 				
-				// Once we have the article embed code, strip the appropriate chars and add
-				// additional css to hide article title and/or published date, if defined.
-				$article_embed = $this->stripSpecialCharsSlashesQuotes($article_embed);
-				$article_embed .= $this->additionalCss($article_id, $display_title, $display_published_date);
+				// Add additional css to hide article title and/or published date
+				$article_embed .= $this->hideTitleAndOrPublishedDate($article_id, $display_title, $display_published_date);
 				
 				// Now replace the article shortcode with the markup for the article itself
 				$new_text = str_replace($shortcode, $article_embed, $new_text);
@@ -66,10 +68,40 @@ class ArticleShortcode extends FilterBase {
 			'#default_value' => $this->settings['questline_engage_article_shortcode_display_published_dates']
 		);
 		
+		$form['questline_engage_article_shortcode_include_jquery'] = array(
+			'#type' => 'checkbox',
+			'#title' => 'Include jQuery',
+			'#description' => 'Determines whether or not to include jQuery in the embedded article HTML. Check this if your theme does not use jQuery.',
+			'#default_value' => $this->settings['questline_engage_article_shortcode_include_jquery']
+		);
+		
 		return $form;
 	}
 	
-	private function additionalCss($article_id, $display_title, $display_published_date) {
+	private function includeJQuery($include_jquery) {
+		$settings_include_jquery = $this->settings['questline_engage_article_shortcode_include_jquery'];
+		$jquery_src = \Drupal::request()->getSchemeAndHttpHost() . '/modules/questline_engage/js/jquery-3.3.1.min.js';
+		$jquery_script = '<script type="text/javascript" src="' . $jquery_src . '"></script>';
+		
+		$output = '';
+		
+		// Check to add jquery to the output. If the include_jquery param was given
+		// in the shortcode, use it; otherwise, use the filter setting
+		if ($include_jquery != null) {
+			if ($include_jquery == 'true') {
+				$output = $jquery_script;
+			}
+		}
+		else {
+			if ($settings_include_jquery == '1') {
+				$output = $jquery_script;
+			}
+		}
+		
+		return $output;
+	}
+	
+	private function hideTitleAndOrPublishedDate($article_id, $display_title, $display_published_date) {
 		$settings_display_titles = $this->settings['questline_engage_article_shortcode_display_titles'];
 		$settings_display_published_dates = $this->settings['questline_engage_article_shortcode_display_published_dates'];
 		
@@ -117,10 +149,30 @@ class ArticleShortcode extends FilterBase {
 
 			$http_client = $this->httpGet($url);
 			$response = curl_exec($http_client);
+			$info = curl_getinfo($http_client);
+			$error = curl_error($http_client);
 			curl_close($http_client);
 			
-			$decoded = json_decode($response);
-			$embed = json_encode($decoded->Article->Embed);
+			if (!$error) {
+				if ($info['http_code'] == 200) {
+					$decoded = json_decode($response);
+					
+					if ($decoded->Error == null) {
+						// No errors, so get the embed code and strip the appropriate chars
+						$embed = json_encode($decoded->Article->Embed);
+						$embed = $this->stripSpecialCharsSlashesQuotes($embed);
+					}
+					else {
+						$this->logError($article_id, $article_type, $decoded->Error);
+					}
+				}
+				else {
+					$this->logError($article_id, $article_type, $info);
+				}
+			}
+			else {
+				$this->logError($article_id, $article_type, $error);
+			}
 		}
 		
 		return $embed;
@@ -195,5 +247,12 @@ class ArticleShortcode extends FilterBase {
 		}
 		
 		return $kvps;
+	}
+	
+	private function logError($article_id, $article_type, $error_info) {
+		$message = 'Error retrieving Engage article @id of type @type (@error_info)';
+		$data = array('@id' => $article_id, '@type' => $article_type, '@error_info' => $error_info);
+		
+		\Drupal::logger('questline_engage')->error($message, $data);
 	}
 }

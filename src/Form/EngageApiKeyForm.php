@@ -4,7 +4,7 @@ namespace Drupal\questline_engage\Form;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-class ApiKeyForm extends ConfigFormBase {
+class EngageApiKeyForm extends ConfigFormBase {
 	private $_config_name = 'questline_engage.admin_apikey';
 	private $_form_id = 'questline_engage_apikey_form';
 	private $_field_name = 'questline_engage_apikey';
