@@ -4,6 +4,7 @@ namespace Drupal\questline_engage\Plugin\Filter;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\filter\FilterProcessResult;
 use Drupal\filter\Plugin\FilterBase;
+use Drupal\questline_engage\Core;
 
 /**
  * @Filter(
@@ -26,17 +27,22 @@ class EngageArticleShortcode extends FilterBase {
 				$kvps = $this->splitShortcodeIntoKeyValuePairs($shortcode);
 
 				// Get shortcode param values
-				$article_id = $this->getKeyValueFromArray('id', $kvps);
-				$article_type = $this->getKeyValueFromArray('type', $kvps);
-				$display_title = $this->getKeyValueFromArray('display_title', $kvps);
-				$display_published_date = $this->getKeyValueFromArray('display_published_date', $kvps);
-				$include_jquery = $this->getKeyValueFromArray('include_jquery', $kvps);
+				$common = new \Drupal\questline_engage\Core\EngageCommon();
+				$article_id = $common->getKeyValueFromArray('id', $kvps);
+				$article_type = $common->getKeyValueFromArray('type', $kvps);
+				$display_title = $common->getKeyValueFromArray('display_title', $kvps);
+				$display_published_date = $common->getKeyValueFromArray('display_published_date', $kvps);
+				$include_jquery = $common->getKeyValueFromArray('include_jquery', $kvps);
 				
 				// Check to include jquery
 				$article_embed = $this->includeJQuery($include_jquery);
 				
 				// Call out to Engage API to retrieve article
-				$article_embed .= $this->getArticleEmbed($article_id, $article_type);
+				$api = new \Drupal\questline_engage\Core\EngageApi();
+				$article_embed .= $api->getArticleEmbed($article_id, $article_type);
+				
+				// Strip special chars, slashes, and quotes
+				$article_embed .= $this->stripSpecialCharsSlashesQuotes($article_embed);
 				
 				// Add additional css to hide article title and/or published date
 				$article_embed .= $this->hideTitleAndOrPublishedDate($article_id, $display_title, $display_published_date);
@@ -80,7 +86,7 @@ class EngageArticleShortcode extends FilterBase {
 	
 	private function includeJQuery($include_jquery) {
 		$settings_include_jquery = $this->settings['questline_engage_article_shortcode_include_jquery'];
-		$jquery_src = \Drupal::request()->getSchemeAndHttpHost() . '/modules/questline_engage/js/jquery-3.3.1.min.js';
+		$jquery_src = \Drupal::request()->getSchemeAndHttpHost() . '/' . drupal_get_path('module', 'questline_engage') . '/js/jquery-3.3.1.min.js';
 		$jquery_script = '<script type="text/javascript" src="' . $jquery_src . '"></script>';
 		
 		$output = '';
@@ -141,61 +147,6 @@ class EngageArticleShortcode extends FilterBase {
 		return $css;
 	}
 	
-	private function getArticleEmbed($article_id = '', $article_type = '') {
-		$embed = '';
-		
-		if ($article_id != '' && $article_type != '') {
-			$url = QL_ENGAGE_API_URL . '/content/articles/' . $article_type . '/' . $article_id . '?expand=embed';
-
-			$http_client = $this->httpGet($url);
-			$response = curl_exec($http_client);
-			$info = curl_getinfo($http_client);
-			$error = curl_error($http_client);
-			curl_close($http_client);
-			
-			if (!$error) {
-				if ($info['http_code'] == 200) {
-					$decoded = json_decode($response);
-					
-					if ($decoded->Error == null) {
-						// No errors, so get the embed code and strip the appropriate chars
-						$embed = json_encode($decoded->Article->Embed);
-						$embed = $this->stripSpecialCharsSlashesQuotes($embed);
-					}
-					else {
-						$this->logError($article_id, $article_type, $decoded->Error);
-					}
-				}
-				else {
-					$this->logError($article_id, $article_type, $info);
-				}
-			}
-			else {
-				$this->logError($article_id, $article_type, $error);
-			}
-		}
-		
-		return $embed;
-	}
-
-	private function httpGet($url) {
-		$api_key = \Drupal::config('questline_engage.admin_apikey')->get('questline_engage_apikey');
-		$headers = array('Authorization: Basic ' . base64_encode($api_key));
-		
-		$http_client = curl_init($url);
-		curl_setopt($http_client, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($http_client, CURLOPT_CUSTOMREQUEST, 'GET');
-		curl_setopt($http_client, CURLOPT_TIMEOUT, 60);
-		curl_setopt($http_client, CURLOPT_RETURNTRANSFER, true);
-		
-		return $http_client;
-	}
-	
-	private function contains($haystack, $needle)
-	{
-		return strpos($haystack, $needle) !== false;
-	}
-	
 	private function stripSpecialCharsSlashesQuotes($string) {
 		// Strip special chars for tabs, returns, and newlines
 		$string = str_replace('\\t', '', $string);
@@ -212,27 +163,15 @@ class EngageArticleShortcode extends FilterBase {
 		return $string;
 	}
 	
-	private function getKeyValueFromArray($key, $array) {
-		$value = null;
-		
-		foreach ($array as $k => $v) {
-			if ($k == $key) {
-				$value = $v;
-				break;
-			}
-		}
-		
-		return $value;
-	}
-	
 	private function splitShortcodeIntoKeyValuePairs($shortcode) {
 		$kvps = array();
+		$common = new \Drupal\questline_engage\Core\EngageCommon();
 		
 		// First split shortcode on single space char
 		$parts = explode(' ', $shortcode);
 		
 		foreach ($parts as $item) {
-			if ($this->contains($item, '=')) {
+			if ($common->contains($item, '=')) {
 				// Then split on equal sign
 				$tmp = explode('=', $item);
 				$kvp = array();
@@ -247,12 +186,5 @@ class EngageArticleShortcode extends FilterBase {
 		}
 		
 		return $kvps;
-	}
-	
-	private function logError($article_id, $article_type, $error_info) {
-		$message = 'Error retrieving Engage article @id of type @type (@error_info)';
-		$data = array('@id' => $article_id, '@type' => $article_type, '@error_info' => $error_info);
-		
-		\Drupal::logger('questline_engage')->error($message, $data);
 	}
 }

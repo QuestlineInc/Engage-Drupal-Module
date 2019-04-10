@@ -5,6 +5,8 @@ use Drupal\ckeditor\CKEditorPluginInterface;
 use Drupal\ckeditor\CKEditorPluginButtonsInterface;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\editor\Entity\Editor;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * @CKEditorPlugin(
