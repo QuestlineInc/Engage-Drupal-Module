@@ -40,10 +40,7 @@ class EngageArticleShortcode extends FilterBase {
 				// Call out to Engage API to retrieve article
 				$api = new \Drupal\questline_engage\Core\EngageApi();
 				$article_embed .= $api->getArticleEmbed($article_id, $article_type);
-				
-				// Strip special chars, slashes, and quotes
-				$article_embed .= $this->stripSpecialCharsSlashesQuotes($article_embed);
-				
+
 				// Add additional css to hide article title and/or published date
 				$article_embed .= $this->hideTitleAndOrPublishedDate($article_id, $display_title, $display_published_date);
 				
@@ -145,22 +142,6 @@ class EngageArticleShortcode extends FilterBase {
 		$css .= '</style>';
 		
 		return $css;
-	}
-	
-	private function stripSpecialCharsSlashesQuotes($string) {
-		// Strip special chars for tabs, returns, and newlines
-		$string = str_replace('\\t', '', $string);
-		$string = str_replace('\\r', '', $string);
-		$string = str_replace('\\n', '', $string);
-		
-		// Strip any remaining slashes
-		$string = stripslashes($string);
-		
-		// Trim any double quotes so that the value of the string itself
-		// doesn't contain any beginning or ending double quotes
-		$string = trim($string, '"');
-		
-		return $string;
 	}
 	
 	private function splitShortcodeIntoKeyValuePairs($shortcode) {

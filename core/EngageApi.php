@@ -18,6 +18,7 @@ class EngageApi {
 					
 					if ($decoded->Error == null) {
 						$embed = json_encode($decoded->Article->Embed);
+						$embed = $this->stripSpecialCharsSlashesQuotes($embed);
 					}
 					else {
 						$common->logError($error_msg, array('@id' => $article_id, '@type' => $article_type, '@error_info' => $decoded->Error));
@@ -123,5 +124,23 @@ class EngageApi {
 		$result['Error'] = $error;
 		
 		return $result;
+	}
+	
+	private function stripSpecialCharsSlashesQuotes($string) {
+		$new_string = $string;
+		
+		// Strip special chars for tabs, returns, and newlines
+		$new_string = str_replace('\\t', '', $new_string);
+		$new_string = str_replace('\\r', '', $new_string);
+		$new_string = str_replace('\\n', '', $new_string);
+		
+		// Strip any remaining slashes
+		$new_string = stripslashes($new_string);
+		
+		// Trim any double quotes so that the value of the string itself
+		// doesn't contain any beginning or ending double quotes
+		$new_string = trim($new_string, '"');
+		
+		return $new_string;
 	}
 }

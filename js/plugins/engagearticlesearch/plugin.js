@@ -38,9 +38,11 @@
 					onShow: function() {
 						// Nothing to see... move along, move along...
 					},
-					onOk: function() {
-						var content = '[ql_engage_article id="" type="" /]';
-						editor.insertHtml(content);
+					onOk: function() {						
+						var articleId = $('#ql_engage_article_search_iframe').contents().find('#selected_article_id').val();
+						var articleType = $('#ql_engage_article_search_iframe').contents().find('#selected_article_type').val();
+						var shortcode = '[ql_engage_article id="' + articleId + '" type="' + articleType + '" /]';
+						editor.insertHtml(shortcode);
 					}
 				};
 			});
@@ -52,7 +54,7 @@
 		
 		var html = '';
 		html += '<div style="width: 100%; height: 600px;">';
-		html += '	<iframe src="' + iframeSrc + '" style="width: 100%; height: 100%;"></iframe>';
+		html += '	<iframe id="ql_engage_article_search_iframe" src="' + iframeSrc + '" style="width: 100%; height: 100%;"></iframe>';
 		html += '</div>';
 
 		return html;

@@ -14,8 +14,21 @@
 			window.open(previewUrl, '_blank');
 		};
 		
-		function insertArticleShortcode(articleId, articleType) {
-			window.send_to_editor('[ql_engage_article id="' + articleId + '" type="' + articleType + '" /]');
+		function selectArticle(articleId, articleType) {
+			$('#selected_article_id').val(articleId);
+			$('#selected_article_type').val(articleType);
+
+			// Clear any existing selection
+			$('.search_list_table td[data-article-thumb]').css('background-color', '#ffffff');
+			$('.search_list_table td[data-article-text]').css('background-color', '#ffffff');
+			$('.search_list_table td[data-article-actions]').css('background-color', '#ffffff');
+			
+			// Highlight selected row
+			$('.search_list_table td[data-article-thumb="' + articleId + '"]').css('background-color', '#d0e9f9');
+			$('.search_list_table td[data-article-text="' + articleId + '"]').css('background-color', '#d0e9f9');
+			$('.search_list_table td[data-article-actions="' + articleId + '"]').css('background-color', '#d0e9f9');
+			
+			return false;
 		};
 		
 		$(document).ready(function() {
@@ -39,8 +52,6 @@
 						unblockElement($('.search_form'));
 						
 						if (list !== null) {
-							console.log(list);
-							
 							var results = buildArticleListSummary(list.TotalResults);
 							results += buildArticleListTable($(list.Articles));
 							
@@ -97,15 +108,15 @@
 					}
 					
 					list += '<tr>';
-					list += '	<td class="' + articleImageStyle + '">';
-					list += '		<img src="' + article.ThumbnailImage + '" alt="Thumbnail" style="width: 80px; height: 60px; border-radius: 3px;" />';
+					list += '	<td class="' + articleImageStyle + '" data-article-thumb="' + article.ArticleId + '">';
+					list += '		<img src="' + article.ThumbnailImage + '" alt="Thumbnail" />';
 					list += '	</td>';
-					list += '	<td class="' + articleTextStyle + '">';
+					list += '	<td class="' + articleTextStyle + '" data-article-text="' + article.ArticleId + '">';
 					list += '		<h4>' + article.Title + '</h4>';
 					list += '		<span>' + article.Summary + '</span>';
 					list += '	</td>';
-					list += '	<td class="' + articleActionsStyle + '">';
-					list += '		<a href="#" onclick="javascript:insertArticleShortcode(\'' + article.ArticleId + '\', \'' + article.Type + '\')">Insert</a>';
+					list += '	<td class="' + articleActionsStyle + '" data-article-actions="' + article.ArticleId + '">';
+					list += '		<a href="#" onclick="javascript:selectArticle(\'' + article.ArticleId + '\', \'' + article.Type + '\')">Select</a>';
 					list += '		<br /><br />';
 					list += '		<a href="#" onclick="javascript:previewArticle(\'' + article.ArticleId + '\', \'' + article.Type + '\')">Preview</a>';
 					list += '	</td>';
@@ -154,6 +165,8 @@
 	<form class="search_form">
 		<input type="hidden" id="page_index" name="page_index" value="0" />
 		<input type="hidden" id="page_size" name="page_size" value="10" />
+		<input type="hidden" id="selected_article_id" name="selected_article_id" />
+		<input type="hidden" id="selected_article_type" name="selected_article_type" />
 		
 		<div class="search_header">
 			<div class="search_icon">
