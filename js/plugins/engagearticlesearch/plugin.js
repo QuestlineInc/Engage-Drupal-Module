@@ -1,7 +1,11 @@
 (function($) {
+	var qlEditor;
+	
 	CKEDITOR.plugins.add('EngageArticleSearch', {
 		icons: 'EngageArticleSearch',
 		init: function(editor) {
+			qlEditor = editor;
+			
 			// Create the new command
 			editor.addCommand('EngageArticleSearch', new CKEDITOR.dialogCommand('EngageArticleSearchDialog'));
 
@@ -20,6 +24,9 @@
 					width: 800,
 					height: 600,
 					resizable: CKEDITOR.DIALOG_RESIZE_NONE,
+					buttons: [
+						CKEDITOR.dialog.cancelButton
+					],
 					contents: [
 						{
 							id: 'EngageArticleSearchContent',
@@ -39,10 +46,7 @@
 						// Nothing to see... move along, move along...
 					},
 					onOk: function() {						
-						var articleId = $('#ql_engage_article_search_iframe').contents().find('#selected_article_id').val();
-						var articleType = $('#ql_engage_article_search_iframe').contents().find('#selected_article_type').val();
-						var shortcode = '[ql_engage_article id="' + articleId + '" type="' + articleType + '" /]';
-						editor.insertHtml(shortcode);
+						// Nothing to see... move along, move along...
 					}
 				};
 			});
@@ -58,5 +62,17 @@
 		html += '</div>';
 
 		return html;
+	}
+	
+	function engageInsertShortcodeIntoEditor(e) {
+		qlEditor.insertHtml(e.data.message);
+		CKEDITOR.dialog.getCurrent().hide();
+	}
+	
+	if (window.addEventListener) {
+		window.addEventListener("message", engageInsertShortcodeIntoEditor, false);        
+	} 
+	else if (window.attachEvent) {
+		window.attachEvent("onmessage", engageInsertShortcodeIntoEditor, false);
 	}
 })(jQuery);

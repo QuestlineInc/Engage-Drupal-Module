@@ -14,19 +14,13 @@
 			window.open(previewUrl, '_blank');
 		};
 		
-		function selectArticle(articleId, articleType) {
-			$('#selected_article_id').val(articleId);
-			$('#selected_article_type').val(articleType);
-
-			// Clear any existing selection
-			$('.search_list_table td[data-article-thumb]').css('background-color', '#ffffff');
-			$('.search_list_table td[data-article-text]').css('background-color', '#ffffff');
-			$('.search_list_table td[data-article-actions]').css('background-color', '#ffffff');
+		function insertArticleShortcode(articleId, articleType) {
+			var shortcode = '[ql_engage_article id="' + articleId + '" type="' + articleType + '" /]';
 			
-			// Highlight selected row
-			$('.search_list_table td[data-article-thumb="' + articleId + '"]').css('background-color', '#d0e9f9');
-			$('.search_list_table td[data-article-text="' + articleId + '"]').css('background-color', '#d0e9f9');
-			$('.search_list_table td[data-article-actions="' + articleId + '"]').css('background-color', '#d0e9f9');
+			window.parent.postMessage({
+				'func': 'engageInsertShortcodeIntoEditor',
+				'message': shortcode
+			}, '*');
 			
 			return false;
 		};
@@ -99,12 +93,10 @@
 				$articles.each(function(index, article) {
 					var articleImageStyle = 'search_list_thumb';
 					var articleTextStyle = 'search_list_text';
-					var articleActionsStyle = 'search_list_actions';
 					
 					if (counter == 1) {
 						articleImageStyle += ' notop';
 						articleTextStyle += ' notop';
-						articleActionsStyle += ' notop';
 					}
 					
 					list += '<tr>';
@@ -113,12 +105,12 @@
 					list += '	</td>';
 					list += '	<td class="' + articleTextStyle + '" data-article-text="' + article.ArticleId + '">';
 					list += '		<h4>' + article.Title + '</h4>';
-					list += '		<span>' + article.Summary + '</span>';
-					list += '	</td>';
-					list += '	<td class="' + articleActionsStyle + '" data-article-actions="' + article.ArticleId + '">';
-					list += '		<a href="#" onclick="javascript:selectArticle(\'' + article.ArticleId + '\', \'' + article.Type + '\')">Select</a>';
-					list += '		<br /><br />';
-					list += '		<a href="#" onclick="javascript:previewArticle(\'' + article.ArticleId + '\', \'' + article.Type + '\')">Preview</a>';
+					list += '		<div>' + article.Summary + '</div>';
+					list += '		<div class="search_list_actions">';
+					list += '			<a href="#" onclick="javascript:insertArticleShortcode(\'' + article.ArticleId + '\', \'' + article.Type + '\')">Insert</a>';
+					list += '			|';
+					list += '			<a href="#" onclick="javascript:previewArticle(\'' + article.ArticleId + '\', \'' + article.Type + '\')">Preview</a>';
+					list += '		</div>';
 					list += '	</td>';
 					list += '</tr>';
 					
@@ -157,6 +149,14 @@
 				searchArticles(0);			
 				return false;
 			});
+			
+			$('.search_list_wrap').on('mouseenter', '.search_list_text', function(e) {
+				$(this).find('div:last').css('left', '0');
+			});
+			
+			$('.search_list_wrap').on('mouseleave', '.search_list_text', function(e) {
+				$(this).find('div:last').css('left', '-9999em');
+			});
 		});
 	</script>
 </head>
@@ -165,9 +165,7 @@
 	<form class="search_form">
 		<input type="hidden" id="page_index" name="page_index" value="0" />
 		<input type="hidden" id="page_size" name="page_size" value="10" />
-		<input type="hidden" id="selected_article_id" name="selected_article_id" />
-		<input type="hidden" id="selected_article_type" name="selected_article_type" />
-		
+
 		<div class="search_header">
 			<div class="search_icon">
 				<img src="images/engage-32.png" alt="Icon" />
