@@ -1,4 +1,7 @@
 <?php
+
+namespace Drupal\questline_engage\Config;
+
 if (!defined('QL_ENGAGE_API_URL'))
-	define('QL_ENGAGE_API_URL', 'http://api-local.questline.com/v3');
+	define('QL_ENGAGE_API_URL', 'https://api.questline.com/v3');
 ?>

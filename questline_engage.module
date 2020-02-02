@@ -1,2 +1,25 @@
 <?php
 require_once DRUPAL_ROOT .'/' . drupal_get_path('module', 'questline_engage') . '/config/config.php';
+require_once DRUPAL_ROOT .'/' . drupal_get_path('module', 'questline_engage') . '/core/EngageCommon.php';
+require_once DRUPAL_ROOT .'/' . drupal_get_path('module', 'questline_engage') . '/core/EngageApi.php';
+
+/**
+ * Implments hook_theme().
+ */
+function questline_engage_theme($existing, $type, $theme, $path) {
+  $modulePath = '/' . drupal_get_path('module', 'questline_engage');
+  $imagePath = $modulePath . '/js/plugins/engagearticlesearch/images/';
+
+  return [
+    'article_preview_template' => [
+      'variables' => [
+        'article' => NULL
+      ],
+    ],
+    'search_dialog_template' => [
+      'variables' => [
+        'imagePath' => $imagePath
+      ]
+    ]
+  ];
+}
