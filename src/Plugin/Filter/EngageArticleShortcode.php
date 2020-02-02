@@ -4,10 +4,7 @@ namespace Drupal\questline_engage\Plugin\Filter;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\filter\FilterProcessResult;
 use Drupal\filter\Plugin\FilterBase;
-use Drupal\questline_engage\Core\EngageApi;
-use Drupal\Core\Config\ConfigFactory;
-use Drupal\Core\Logger\LoggerChannelFactory;
-use Drupal\questline_engage\Core\EngageCommon;
+use Drupal\questline_engage\Core;
 
 /**
  * @Filter(
@@ -17,9 +14,8 @@ use Drupal\questline_engage\Core\EngageCommon;
  *    type = Drupal\filter\Plugin\FilterInterface::TYPE_MARKUP_LANGUAGE
  * )
  */
-class EngageArticleShortcode extends FilterBase{
-
-    public function process($text, $langcode) {
+class EngageArticleShortcode extends FilterBase {
+	public function process($text, $langcode) {
 		$pattern = '/\[ql_engage_article.+?\/\]/s';
 		$count = preg_match_all($pattern, $text, $matches);
 
@@ -31,7 +27,7 @@ class EngageArticleShortcode extends FilterBase{
 				$kvps = $this->splitShortcodeIntoKeyValuePairs($shortcode);
 
 				// Get shortcode param values
-				$common = new EngageCommon();
+				$common = new \Drupal\questline_engage\Core\EngageCommon();
 				$article_id = $common->getKeyValueFromArray('id', $kvps);
 				$article_type = $common->getKeyValueFromArray('type', $kvps);
 				$display_title = $common->getKeyValueFromArray('display_title', $kvps);
@@ -42,7 +38,7 @@ class EngageArticleShortcode extends FilterBase{
 				$article_embed = $this->includeJQuery($include_jquery);
 				
 				// Call out to Engage API to retrieve article
-				$api = new EngageApi();
+				$api = new \Drupal\questline_engage\Core\EngageApi();
 				$article_embed .= $api->getArticleEmbed($article_id, $article_type);
 
 				// Add additional css to hide article title and/or published date
@@ -150,7 +146,7 @@ class EngageArticleShortcode extends FilterBase{
 	
 	private function splitShortcodeIntoKeyValuePairs($shortcode) {
 		$kvps = array();
-		$common = new EngageCommon();
+		$common = new \Drupal\questline_engage\Core\EngageCommon();
 		
 		// First split shortcode on single space char
 		$parts = explode(' ', $shortcode);
