@@ -54,7 +54,7 @@
 	});
 	
 	function engageArticleSearchContent(pluginPath) {
-		var iframeSrc = window.location.protocol + '//' + window.location.hostname + pluginPath + 'EngageArticleSearchDialog.php';
+		var iframeSrc = window.location.protocol + '//' + window.location.hostname + '/questline/search/dialog';
 		
 		var html = '';
 		html += '<div style="width: 100%; height: 600px;">';

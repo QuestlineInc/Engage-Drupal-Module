@@ -1,8 +1,14 @@
 <?php
 namespace Drupal\questline_engage\Core;
+use Drupal\questline_engage\Config;
 
 class EngageCommon {
-	public function contains($haystack, $needle)
+
+    protected $loggerFactory;
+    public function __construct() {
+        $this->loggerFactory = \Drupal::logger('questline_engage');
+    }
+    public function contains($haystack, $needle)
 	{
 		return strpos($haystack, $needle) !== false;
 	}
@@ -22,6 +28,6 @@ class EngageCommon {
 	
 	public function logError($message, $data) {
 		// Puts an error record in the Drupal watchdog table
-		\Drupal::logger('questline_engage')->error($message, $data);
+		$this->loggerFactory->error($message, $data);
 	}
 }

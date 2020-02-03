@@ -1,0 +1,44 @@
+.article_wrap {
+	background-color: #ffffff;
+	margin-top: 40px;
+	margin-bottom: 40px;
+	padding: 40px;
+	border-radius: 4px;
+	border: solid 1px #e5e5e5;
+}
+.article_label {
+	text-transform: uppercase;
+	color: #8a95a5;
+	font-weight: bold;
+	margin-bottom: 5px;
+}
+.article_value {
+	margin-bottom: 20px;
+}
+.article_value.articleid {
+	word-wrap: break-word;
+}
+.article_value.body img {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	max-width: 100%;
+}
+.article_value.body img[align='left'] {
+	margin-right: 20px;
+}
+.article_value.body img[align='right'] {
+	margin-left: 20px;
+}
+.article_meta {
+	padding: 20px;
+	border-radius: 4px;
+	border: solid 1px #e5e5e5;
+}
+
+/*Drupal Overrides*/
+div.region-breadcrumb, header.content-header,
+div.toolbar, a.skip-link { display: none; }
+body {
+	background-color: #f9f9f9 !important;
+	margin: 0 !important;
+}

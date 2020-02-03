@@ -1,0 +1,34 @@
+article-preview:
+  css:
+    theme:
+      css/article-preview.css: {}
+    base:
+      css/bootstrap.min.css: {}
+  js:
+    js/plugins/engagearticlesearch/js/bootstrap.min.js : {}
+
+article-search:
+  css:
+    theme:
+      css/article-search.css: {}
+    base:
+      css/bootstrap.min.css: {}
+  js:
+    js/plugins/engagearticlesearch/js/bootstrap.min.js : {}
+    js/plugins/engagearticlesearch/js/functions.js : {}
+
+simple-pagination:
+  css:
+    layout:
+      css/simplePagination.css: {}
+  js:
+    js/plugins/engagearticlesearch/js/jquery.simplePagination.js: {}
+  dependencies:
+    - core/jquery
+
+jquery-blockUI:
+  header: true
+  js:
+    js/plugins/engagearticlesearch/js/jquery.blockUI.js: {}
+  dependencies:
+  - core/jquery

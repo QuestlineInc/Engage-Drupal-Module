@@ -1,0 +1,28 @@
+{{ attach_library('questline_engage/article-preview') }}
+{% if article is not empty %}
+<div class="container article_wrap">
+    <div class="row">
+        <div class="col-8">
+            <div class="article_label">{{ 'Title'|t}}</div>
+            <div class="article_value"><h1>{{ article.Title|t }}</h1></div>
+
+            <div class="article_label">{{ 'Summary'|t }}</div>
+            <div class="article_value">{{ article.Summary|t }}</div>
+
+            <div class="article_label">{{ 'Body'|t }}</div>
+            <div class="article_value body">{{ article.Body|t }}</div>
+        </div>
+        <div class="col-4">
+            <div class="article_meta">
+                <div class="article_label">{{ 'Added to Library'|t }}</div>
+                <div class="article_value">{{ article.Published|date("m/d/Y") }}</div>
+
+                <div class="article_label">{{ 'Article ID'|t }}</div>
+                <div class="article_value articleid">{{ article.ArticleId|t }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<p>{{ 'Article not found or is not supported.'|t }}</p>
+{% endif %}

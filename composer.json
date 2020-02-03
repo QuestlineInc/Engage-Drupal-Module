@@ -1,0 +1,17 @@
+{
+  "name": "drupal/engage_drupal_module",
+  "description": "The official Drupal plugin for Questline's Engage platform.",
+  "type": "drupal-module",
+  "autoload": {
+    "psr-4": {
+      "Drupal\\Engage_Drupal_Module": "src/"
+    }
+  },
+  "extra": {
+    "drush": {
+      "services": {
+        "drush.services.yml": "^9"
+      }
+    }
+  }
+}

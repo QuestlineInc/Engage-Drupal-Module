@@ -6,3 +6,8 @@ version: 0.1.0
 core: 8.x
 dependencies:
     - ckeditor
+libraries:
+  - 'article-preview'
+  - 'article-search'
+  - 'simple-pagination'
+  - 'jquery-blockUI'

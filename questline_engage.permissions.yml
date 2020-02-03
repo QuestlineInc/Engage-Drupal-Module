@@ -1,0 +1,4 @@
+access questline settings:
+  title: 'Engage module settings'
+  description: 'Custom permission for the Questline Engage settings page that restricts access to admin pages'
+  restrict access: true
