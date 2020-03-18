@@ -1,8 +1,8 @@
-questline_engage.admin_apikey:
-    path: '/admin/config/questline_engage/apikey'
+questline_engage.admin_settings:
+    path: '/admin/config/questline_engage/settings'
     defaults:
         _form: '\Drupal\questline_engage\Form\EngageApiKeyForm'
-        _title: 'Questline Engage: API Key'
+        _title: 'Questline Engage: Settings'
     requirements:
         _permission: 'access administrator pages'
     options:
@@ -20,7 +20,7 @@ questline_engage.articlePreviewCallback:
     path: '/questline/article/preview'
     defaults:
         _controller: '\Drupal\questline_engage\Controller\ArticleController::preview'
-        _title: "Hello World"
+        _title: 'Article Preview'
     requirements:
         _permission: 'access content'
 
@@ -28,7 +28,7 @@ questline_engage.article_search_dialog:
     path: '/questline/search/dialog'
     defaults:
         _controller: '\Drupal\questline_engage\Controller\SearchController::dialog'
-        _title: "Search"
+        _title: 'Search'
     requirements:
         _permission: 'access content'
     options:
@@ -38,7 +38,7 @@ questline_engage.do_search:
     path: '/questline/search'
     defaults:
         _controller: '\Drupal\questline_engage\Controller\SearchController::search'
-        _title: "Search"
+        _title: 'Search'
     requirements:
         _permission: 'access content'
 

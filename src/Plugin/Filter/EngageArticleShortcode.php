@@ -41,7 +41,6 @@ class EngageArticleShortcode extends FilterBase {
 				// Call out to Engage API to retrieve article
 				$api = new EngageApi();
 				$article_embed .= $api->getArticleEmbed($article_id, $article_type);
-				//die($article_embed);
 
 				// Add additional css to hide article title and/or published date
 				$article_embed .= $this->hideTitleAndOrPublishedDate($article_id, $display_title, $display_published_date);

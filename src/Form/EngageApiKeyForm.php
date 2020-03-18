@@ -5,16 +5,15 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 class EngageApiKeyForm extends ConfigFormBase {
-	private $_config_name = 'questline_engage.admin_apikey';
-	private $_form_id = 'questline_engage_apikey_form';
-	private $_field_name = 'questline_engage_apikey';
+	private $_config_name = 'questline_engage.settings';
+	private $_field_name = 'api_key';
 	
 	public function getEditableConfigNames() {
 		return [$this->_config_name];
 	}
 	
 	public function getFormId() {
-		return $this->_form_id;
+		return 'questline_engage_admin_settings';
 	}
 	
 	public function buildForm(array $form, FormStateInterface $form_state) {
