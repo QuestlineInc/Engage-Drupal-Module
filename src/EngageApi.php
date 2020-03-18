@@ -1,6 +1,7 @@
 <?php
-namespace Drupal\questline_engage\Core;
+namespace Drupal\questline_engage;
 use Drupal\questline_engage\Config;
+use Drupal\questline_engage\EngageCommon;
 
 class EngageApi{
 
@@ -9,7 +10,7 @@ class EngageApi{
         $this->configFactory = \Drupal::config("questline_engage_custom.settings");
     }
 	public function getArticleEmbed($article_id = '', $article_type = '') {
-		$common = new EngageCommon();
+		$common = new \Drupal\questline_engage\core\EngageCommon();
 		$error_msg = t('Error retrieving Engage article for embed code; article @id, type @type (@error_info)');
 		
 		$embed = '';
@@ -43,7 +44,7 @@ class EngageApi{
 	}
 	
 	public function getArticlePreview($article_id = '', $article_type = '') {
-		$common = new EngageCommon();
+		$common = new \Drupal\questline_engage\core\EngageCommon();
 		$article = null;
 		if ($article_id != '' && $article_type != '') {
 			$url = QL_ENGAGE_API_URL . '/content/articles/' . $article_type . '/' . $article_id . '?format=html';
@@ -72,7 +73,7 @@ class EngageApi{
 	}
 	
 	public function searchArticles($keyword = '', $page_index = 0, $page_size = 10) {
-		$common = new EngageCommon();
+		$common = new \Drupal\questline_engage\core\EngageCommon();
 		
 		$results = null;
 		$url = QL_ENGAGE_API_URL . '/content/articles?search=' . urlencode($keyword) . '&page=index~' . $page_index . ',size~' . $page_size;

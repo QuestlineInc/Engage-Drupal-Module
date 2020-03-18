@@ -1,4 +1,6 @@
 <?php
+die(DRUPAL_ROOT .'/' . drupal_get_path('module', 'questline_engage') . '/core/EngageCommon.php');
+
 require_once DRUPAL_ROOT .'/' . drupal_get_path('module', 'questline_engage') . '/config/config.php';
 require_once DRUPAL_ROOT .'/' . drupal_get_path('module', 'questline_engage') . '/core/EngageCommon.php';
 require_once DRUPAL_ROOT .'/' . drupal_get_path('module', 'questline_engage') . '/core/EngageApi.php';
