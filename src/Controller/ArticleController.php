@@ -9,7 +9,7 @@ class ArticleController extends ControllerBase {
     public function preview() {
         $article_id = \Drupal::request()->query->get('id');
         $article_type = \Drupal::request()->query->get('type');
-        $api = new questline_engage\core\EngageApi();
+        $api = new questline_engage\EngageApi();
         $article = $api->getArticlePreview($article_id, $article_type);
         $title = ($article != null) ? t('Engage Article Preview - ' . $article->Title)
                                     : t('Engage Article Not Found Or Is Not Supported');

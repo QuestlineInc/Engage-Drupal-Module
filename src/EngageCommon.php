@@ -1,5 +1,5 @@
 <?php
-namespace Drupal\questline_engage\core;
+namespace Drupal\questline_engage;
 use Drupal\questline_engage\Config;
 
 class EngageCommon {

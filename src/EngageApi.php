@@ -1,24 +1,26 @@
 <?php
 namespace Drupal\questline_engage;
-use Drupal\questline_engage\Config;
-use Drupal\questline_engage\EngageCommon;
+
 
 class EngageApi{
-
+    protected $ql_base_url;
     protected $configFactory;
     public function __construct() {
         $this->configFactory = \Drupal::config("questline_engage_custom.settings");
+        //TODO: Replace with proper config
+        $this->ql_base_url = 'https://api.questline.com/v3';
     }
 	public function getArticleEmbed($article_id = '', $article_type = '') {
-		$common = new \Drupal\questline_engage\core\EngageCommon();
+		$common = new EngageCommon();
 		$error_msg = t('Error retrieving Engage article for embed code; article @id, type @type (@error_info)');
 		
 		$embed = '';
 		
 		if ($article_id != '' && $article_type != '') {
-		    $url = QL_ENGAGE_API_URL . '/content/articles/' . $article_type . '/' . $article_id . '?expand=embed';
+            //TODO: replace wih proper config
+
+		    $url = $this->ql_base_url . '/content/articles/' . $article_type . '/' . $article_id . '?expand=embed';
 			$api_result = $this->makeApiGetCall($url);
-			
 			if (!$api_result['Error']) {
 				if ($api_result['Info']['http_code'] == 200) {
 					$decoded = json_decode($api_result['Response']);
@@ -44,10 +46,10 @@ class EngageApi{
 	}
 	
 	public function getArticlePreview($article_id = '', $article_type = '') {
-		$common = new \Drupal\questline_engage\core\EngageCommon();
+		$common = new EngageCommon();
 		$article = null;
 		if ($article_id != '' && $article_type != '') {
-			$url = QL_ENGAGE_API_URL . '/content/articles/' . $article_type . '/' . $article_id . '?format=html';
+			$url = $this->ql_base_url . '/content/articles/' . $article_type . '/' . $article_id . '?format=html';
 			$api_result = $this->makeApiGetCall($url);
 			if (!$api_result['Error']) {
 				if ($api_result['Info']['http_code'] == 200) {
@@ -73,10 +75,10 @@ class EngageApi{
 	}
 	
 	public function searchArticles($keyword = '', $page_index = 0, $page_size = 10) {
-		$common = new \Drupal\questline_engage\core\EngageCommon();
+		$common = new EngageCommon();
 		
 		$results = null;
-		$url = QL_ENGAGE_API_URL . '/content/articles?search=' . urlencode($keyword) . '&page=index~' . $page_index . ',size~' . $page_size;
+		$url = $this->ql_base_url . '/content/articles?search=' . urlencode($keyword) . '&page=index~' . $page_index . ',size~' . $page_size;
 		$api_result = $this->makeApiGetCall($url);
 		if (!$api_result['Error']) {
 			if ($api_result['Info']['http_code'] == 200) {

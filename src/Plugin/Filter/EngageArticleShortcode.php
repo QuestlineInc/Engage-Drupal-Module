@@ -4,7 +4,8 @@ namespace Drupal\questline_engage\Plugin\Filter;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\filter\FilterProcessResult;
 use Drupal\filter\Plugin\FilterBase;
-use Drupal\questline_engage\Core;
+use Drupal\questline_engage\EngageApi;
+use Drupal\questline_engage\EngageCommon;
 
 /**
  * @Filter(
@@ -27,7 +28,7 @@ class EngageArticleShortcode extends FilterBase {
 				$kvps = $this->splitShortcodeIntoKeyValuePairs($shortcode);
 
 				// Get shortcode param values
-				$common = new \Drupal\questline_engage\Core\EngageCommon();
+				$common = new EngageCommon();
 				$article_id = $common->getKeyValueFromArray('id', $kvps);
 				$article_type = $common->getKeyValueFromArray('type', $kvps);
 				$display_title = $common->getKeyValueFromArray('display_title', $kvps);
@@ -38,8 +39,9 @@ class EngageArticleShortcode extends FilterBase {
 				$article_embed = $this->includeJQuery($include_jquery);
 				
 				// Call out to Engage API to retrieve article
-				$api = new \Drupal\questline_engage\Core\EngageApi();
+				$api = new EngageApi();
 				$article_embed .= $api->getArticleEmbed($article_id, $article_type);
+				//die($article_embed);
 
 				// Add additional css to hide article title and/or published date
 				$article_embed .= $this->hideTitleAndOrPublishedDate($article_id, $display_title, $display_published_date);
@@ -146,7 +148,7 @@ class EngageArticleShortcode extends FilterBase {
 	
 	private function splitShortcodeIntoKeyValuePairs($shortcode) {
 		$kvps = array();
-		$common = new \Drupal\questline_engage\Core\EngageCommon();
+		$common = new EngageCommon();
 		
 		// First split shortcode on single space char
 		$parts = explode(' ', $shortcode);
