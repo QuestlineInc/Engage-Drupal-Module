@@ -6,7 +6,7 @@ questline_engage.admin_apikey:
     requirements:
         _permission: 'access administrator pages'
     options:
-        _admin_route: TRUE
+        _admin_route: 'TRUE'
 
 system.admin_config_questline_engage:
     path: '/admin/config/questline_engage'
@@ -31,6 +31,8 @@ questline_engage.article_search_dialog:
         _title: "Search"
     requirements:
         _permission: 'access content'
+    options:
+        _admin_route: 'TRUE'
 
 questline_engage.do_search:
     path: '/questline/search'
