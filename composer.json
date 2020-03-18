@@ -6,12 +6,5 @@
     "psr-4": {
       "Drupal\\Engage_Drupal_Module": "src/"
     }
-  },
-  "extra": {
-    "drush": {
-      "services": {
-        "drush.services.yml": "^9"
-      }
-    }
   }
 }

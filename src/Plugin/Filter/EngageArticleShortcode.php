@@ -60,22 +60,22 @@ class EngageArticleShortcode extends FilterBase {
 	public function settingsForm(array $form, FormStateInterface $form_state) {
 		$form['questline_engage_article_shortcode_display_titles'] = array(
 			'#type' => 'checkbox',
-			'#title' => 'Display article titles',
-			'#description' => 'Determines whether or not to show the Engage article title in the embedded article HTML.',
+			'#title' => $this->t('Display article titles'),
+			'#description' => $this->t('Determines whether or not to show the Engage article title in the embedded article HTML.'),
 			'#default_value' => $this->settings['questline_engage_article_shortcode_display_titles']
 		);
 		
 		$form['questline_engage_article_shortcode_display_published_dates'] = array(
 			'#type' => 'checkbox',
-			'#title' => 'Display published dates',
-			'#description' => 'Determines whether or not to show the Engage article published date in the embedded article HTML.',
+			'#title' => $this->t('Display published dates'),
+			'#description' => $this->t('Determines whether or not to show the Engage article published date in the embedded article HTML.'),
 			'#default_value' => $this->settings['questline_engage_article_shortcode_display_published_dates']
 		);
 		
 		$form['questline_engage_article_shortcode_include_jquery'] = array(
 			'#type' => 'checkbox',
-			'#title' => 'Include jQuery',
-			'#description' => 'Determines whether or not to include jQuery in the embedded article HTML. Check this if your theme does not use jQuery.',
+			'#title' => $this->t('Include jQuery'),
+			'#description' => $this->t('Determines whether or not to include jQuery in the embedded article HTML. Check this if your theme does not use jQuery.'),
 			'#default_value' => $this->settings['questline_engage_article_shortcode_include_jquery']
 		);
 		
