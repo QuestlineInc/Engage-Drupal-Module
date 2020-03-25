@@ -4,7 +4,8 @@ namespace Drupal\questline_engage\Plugin\Filter;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\filter\FilterProcessResult;
 use Drupal\filter\Plugin\FilterBase;
-use Drupal\questline_engage\Core;
+use Drupal\questline_engage\EngageApi;
+use Drupal\questline_engage\EngageCommon;
 
 /**
  * @Filter(
@@ -27,7 +28,7 @@ class EngageArticleShortcode extends FilterBase {
 				$kvps = $this->splitShortcodeIntoKeyValuePairs($shortcode);
 
 				// Get shortcode param values
-				$common = new \Drupal\questline_engage\Core\EngageCommon();
+				$common = new EngageCommon();
 				$article_id = $common->getKeyValueFromArray('id', $kvps);
 				$article_type = $common->getKeyValueFromArray('type', $kvps);
 				$display_title = $common->getKeyValueFromArray('display_title', $kvps);
@@ -38,7 +39,7 @@ class EngageArticleShortcode extends FilterBase {
 				$article_embed = $this->includeJQuery($include_jquery);
 				
 				// Call out to Engage API to retrieve article
-				$api = new \Drupal\questline_engage\Core\EngageApi();
+				$api = new EngageApi();
 				$article_embed .= $api->getArticleEmbed($article_id, $article_type);
 
 				// Add additional css to hide article title and/or published date
@@ -59,22 +60,22 @@ class EngageArticleShortcode extends FilterBase {
 	public function settingsForm(array $form, FormStateInterface $form_state) {
 		$form['questline_engage_article_shortcode_display_titles'] = array(
 			'#type' => 'checkbox',
-			'#title' => 'Display article titles',
-			'#description' => 'Determines whether or not to show the Engage article title in the embedded article HTML.',
+			'#title' => $this->t('Display article titles'),
+			'#description' => $this->t('Determines whether or not to show the Engage article title in the embedded article HTML.'),
 			'#default_value' => $this->settings['questline_engage_article_shortcode_display_titles']
 		);
 		
 		$form['questline_engage_article_shortcode_display_published_dates'] = array(
 			'#type' => 'checkbox',
-			'#title' => 'Display published dates',
-			'#description' => 'Determines whether or not to show the Engage article published date in the embedded article HTML.',
+			'#title' => $this->t('Display published dates'),
+			'#description' => $this->t('Determines whether or not to show the Engage article published date in the embedded article HTML.'),
 			'#default_value' => $this->settings['questline_engage_article_shortcode_display_published_dates']
 		);
 		
 		$form['questline_engage_article_shortcode_include_jquery'] = array(
 			'#type' => 'checkbox',
-			'#title' => 'Include jQuery',
-			'#description' => 'Determines whether or not to include jQuery in the embedded article HTML. Check this if your theme does not use jQuery.',
+			'#title' => $this->t('Include jQuery'),
+			'#description' => $this->t('Determines whether or not to include jQuery in the embedded article HTML. Check this if your theme does not use jQuery.'),
 			'#default_value' => $this->settings['questline_engage_article_shortcode_include_jquery']
 		);
 		
@@ -146,7 +147,7 @@ class EngageArticleShortcode extends FilterBase {
 	
 	private function splitShortcodeIntoKeyValuePairs($shortcode) {
 		$kvps = array();
-		$common = new \Drupal\questline_engage\Core\EngageCommon();
+		$common = new EngageCommon();
 		
 		// First split shortcode on single space char
 		$parts = explode(' ', $shortcode);

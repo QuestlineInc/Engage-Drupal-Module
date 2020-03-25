@@ -1,5 +1,0 @@
-services:
-  questline_engage.commands:
-    class: \Drupal\Engage-Drupal-Module\Commands\QuestlineEngageCommands
-    tags:
-      - {name: drush.command}
