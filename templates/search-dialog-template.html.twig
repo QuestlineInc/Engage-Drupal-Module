@@ -39,7 +39,7 @@
             success: function (list) {
               unblockElement($('.search_form'));
 
-              if (list !== null) {
+              if (list !== null && $.isEmptyObject(list) !== true) {
                 var results = buildArticleListSummary(list.TotalResults);
                 results += buildArticleListTable($(list.Articles));
 
@@ -66,6 +66,7 @@
           var rangeStart = parseInt(startPos + 1);
           var rangeEnd = parseInt(startPos + endPos);
 
+          console.log("Results: " + totalResults);
           var summary = '';
           summary += '<div class="search_list_summary">';
           summary += '	<div class="search_list_range">';
