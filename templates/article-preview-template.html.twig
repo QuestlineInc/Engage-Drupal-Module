@@ -12,7 +12,11 @@
             <div class="article_label">{{ 'Body'|t }}</div>
             <div class="article_value body">{{ article.Body|t }}</div>
         </div>
-        <div class="col-4">
+        <div class="col-4"> 
+            <div class="thumbnail">
+                <img src="{{ article.ThumbnailImage|t }}" />
+            </div>
+
             <div class="article_meta">
                 <div class="article_label">{{ 'Added to Library'|t }}</div>
                 <div class="article_value">{{ article.Published|date("m/d/Y") }}</div>
