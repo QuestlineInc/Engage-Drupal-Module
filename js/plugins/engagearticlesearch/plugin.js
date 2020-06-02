@@ -19,6 +19,7 @@
 			
 			// Add the dialog box
 			CKEDITOR.dialog.add('EngageArticleSearchDialog', function(editor) {
+				qlEditor = editor;
 				return {
 					title: 'Insert Article into Editor',
 					width: 800,

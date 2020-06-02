@@ -35,6 +35,14 @@
 	border: solid 1px #e5e5e5;
 }
 
+.thumbnail {
+    position: relative;
+    top: 3px;
+    border-top-left-radius: 4px;
+    overflow: hidden;
+    border-top-right-radius: 4px;
+}
+
 /*Drupal Overrides*/
 div.region-breadcrumb, header.content-header,
 div.toolbar, a.skip-link { display: none; }
