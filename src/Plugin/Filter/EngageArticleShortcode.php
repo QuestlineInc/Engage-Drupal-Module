@@ -4,7 +4,8 @@ namespace Drupal\questline_engage\Plugin\Filter;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\filter\FilterProcessResult;
 use Drupal\filter\Plugin\FilterBase;
-use Drupal\questline_engage\Core;
+use Drupal\questline_engage\EngageApi;
+use Drupal\questline_engage\EngageCommon;
 
 /**
  * @Filter(
@@ -27,22 +28,23 @@ class EngageArticleShortcode extends FilterBase {
 				$kvps = $this->splitShortcodeIntoKeyValuePairs($shortcode);
 
 				// Get shortcode param values
-				$common = new \Drupal\questline_engage\Core\EngageCommon();
+				$common = new EngageCommon();
 				$article_id = $common->getKeyValueFromArray('id', $kvps);
 				$article_type = $common->getKeyValueFromArray('type', $kvps);
 				$display_title = $common->getKeyValueFromArray('display_title', $kvps);
 				$display_published_date = $common->getKeyValueFromArray('display_published_date', $kvps);
+				$display_summary = $common->getKeyValueFromArray('display_summary', $kvps);
 				$include_jquery = $common->getKeyValueFromArray('include_jquery', $kvps);
 				
 				// Check to include jquery
 				$article_embed = $this->includeJQuery($include_jquery);
 				
 				// Call out to Engage API to retrieve article
-				$api = new \Drupal\questline_engage\Core\EngageApi();
+				$api = new EngageApi();
 				$article_embed .= $api->getArticleEmbed($article_id, $article_type);
 
 				// Add additional css to hide article title and/or published date
-				$article_embed .= $this->hideTitleAndOrPublishedDate($article_id, $display_title, $display_published_date);
+				$article_embed .= $this->hideTitleAndOrPublishedDate($article_id, $display_title, $display_published_date, $display_summary);
 				
 				// Now replace the article shortcode with the markup for the article itself
 				$new_text = str_replace($shortcode, $article_embed, $new_text);
@@ -59,23 +61,30 @@ class EngageArticleShortcode extends FilterBase {
 	public function settingsForm(array $form, FormStateInterface $form_state) {
 		$form['questline_engage_article_shortcode_display_titles'] = array(
 			'#type' => 'checkbox',
-			'#title' => 'Display article titles',
-			'#description' => 'Determines whether or not to show the Engage article title in the embedded article HTML.',
+			'#title' => $this->t('Display article titles'),
+			'#description' => $this->t('Determines whether or not to show the Engage article title in the embedded article HTML.'),
 			'#default_value' => $this->settings['questline_engage_article_shortcode_display_titles']
 		);
 		
 		$form['questline_engage_article_shortcode_display_published_dates'] = array(
 			'#type' => 'checkbox',
-			'#title' => 'Display published dates',
-			'#description' => 'Determines whether or not to show the Engage article published date in the embedded article HTML.',
+			'#title' => $this->t('Display published dates'),
+			'#description' => $this->t('Determines whether or not to show the Engage article published date in the embedded article HTML.'),
 			'#default_value' => $this->settings['questline_engage_article_shortcode_display_published_dates']
 		);
 		
 		$form['questline_engage_article_shortcode_include_jquery'] = array(
 			'#type' => 'checkbox',
-			'#title' => 'Include jQuery',
-			'#description' => 'Determines whether or not to include jQuery in the embedded article HTML. Check this if your theme does not use jQuery.',
+			'#title' => $this->t('Include jQuery'),
+			'#description' => $this->t('Determines whether or not to include jQuery in the embedded article HTML. Check this if your theme does not use jQuery.'),
 			'#default_value' => $this->settings['questline_engage_article_shortcode_include_jquery']
+		);
+
+		$form['questline_engage_article_shortcode_include_summary'] = array(
+			'#type' => 'checkbox',
+			'#title' => $this->t('Include Summary'),
+			'#description' => $this->t('Determines whether or not to include the summary in the embedded article HTML.'),
+			'#default_value' => $this->settings['questline_engage_article_shortcode_include_summary']
 		);
 		
 		return $form;
@@ -104,13 +113,15 @@ class EngageArticleShortcode extends FilterBase {
 		return $output;
 	}
 	
-	private function hideTitleAndOrPublishedDate($article_id, $display_title, $display_published_date) {
-		$settings_display_titles = $this->settings['questline_engage_article_shortcode_display_titles'];
+	private function hideTitleAndOrPublishedDate($article_id, $display_title, $display_published_date, $display_summary) {
 		$settings_display_published_dates = $this->settings['questline_engage_article_shortcode_display_published_dates'];
+		$settings_display_titles = $this->settings['questline_engage_article_shortcode_display_titles'];
+		$settings_display_summary = $this->settings['questline_engage_article_shortcode_include_summary'];
 		
 		$css_hide_title = '#ql-embed-' . $article_id . ' h1.ql-embed-article__title { display: none; }';
 		$css_hide_published_date = '#ql-embed-' . $article_id . ' p.ql-embed-article__pubdate { display: none; }';
-		
+		$css_show_summary =  '#ql-embed-' . $article_id . ' div.ql-embed-article__summary { display: block !important; }';
+
 		$css = '<style type="text/css">';
 		
 		// Check to hide article title. If the display_title param was given
@@ -138,6 +149,19 @@ class EngageArticleShortcode extends FilterBase {
 				$css .= $css_hide_published_date;
 			}
 		}
+
+		// Check to hide article published date. If the display_published_date param
+		// was given in the shortcode, use it; otherwise, use the filter setting
+		if ($display_summary != null) {
+			if ($display_summary == 'true') {
+				$css .= $css_show_summary;
+			}
+		}
+		else {
+			if ($settings_display_summary == '1') {
+				$css .= $css_show_summary;
+			}
+		}
 		
 		$css .= '</style>';
 		
@@ -146,7 +170,7 @@ class EngageArticleShortcode extends FilterBase {
 	
 	private function splitShortcodeIntoKeyValuePairs($shortcode) {
 		$kvps = array();
-		$common = new \Drupal\questline_engage\Core\EngageCommon();
+		$common = new EngageCommon();
 		
 		// First split shortcode on single space char
 		$parts = explode(' ', $shortcode);

@@ -3,6 +3,7 @@
 namespace Drupal\questline_engage\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Drupal\questline_engage;
 
 class SearchController extends ControllerBase {
 
@@ -21,7 +22,7 @@ class SearchController extends ControllerBase {
                 $page_index = isset($_POST['page_index']) ? $_POST['page_index'] : '0';
                 $page_size = isset($_POST['page_size']) ? $_POST['page_size'] : '10';
 
-                $api = new \Drupal\questline_engage\Core\EngageApi();
+                $api = new questline_engage\EngageApi();
                 $results = $api->searchArticles($search_keyword, $page_index, $page_size);
             }
             return new JsonResponse($results);

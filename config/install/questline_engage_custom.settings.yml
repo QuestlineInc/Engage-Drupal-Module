@@ -1,4 +1,0 @@
-config_name: 'questline_engage.admin_apikey'
-form_id: 'questline_engage_apikey_form'
-api_key: '1234-1234-1234-1234'
-langcode: 'en'

@@ -1,7 +1,7 @@
-questline_engage.admin_apikey:
+questline_engage.admin_settings:
     title: 'API key'
     description: 'Enter your API key to access Questline Engage content.'
-    route_name: questline_engage.admin_apikey
+    route_name: questline_engage.admin_settings
     parent: questline_engage.group.admin
 
 questline_engage.group.admin:
