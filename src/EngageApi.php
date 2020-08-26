@@ -25,7 +25,7 @@ class EngageApi {
           $decoded = json_decode($api_result['Response']);
 
           if ($decoded->Error == null) {
-            $embed = json_encode($decoded->Article->Embed);
+            $embed = json_encode($decoded->Article->Embed, JSON_UNESCAPED_UNICODE);
             $embed = $this->stripSpecialCharsSlashesQuotes($embed);
           }
           else {
